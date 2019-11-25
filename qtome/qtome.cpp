@@ -25,8 +25,6 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QToolBar>
 
-#include <boost/filesystem/path.hpp>
-
 qtome::qtome(QWidget* parent)
   : QMainWindow(parent)
 {
@@ -80,7 +78,6 @@ qtome::OnUpdateRenderer()
 void
 qtome::createActions()
 {
-  // boost::filesystem::path iconpath(QCoreApplication::applicationDirPath().toStdString());
 
   // TODO ensure a proper title, shortcut, icon, and statustip for every action
   m_openAction = new QAction(tr("&Open volume..."), this);

@@ -10,6 +10,8 @@ project(
   VERSION 0.0.4.2
   LANGUAGES C CXX
 )
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add paths to our CMake code to the module path, so they can be found automatically by
 # CMake.
@@ -64,9 +66,21 @@ find_package(Qt5Xml)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 #endif()
 
-find_package(Boost COMPONENTS chrono log log_setup iostreams thread system filesystem date_time atomic REQUIRED)
+# the following line is a workaround for homebrew boost 1.71 + cmake not finding the boost multithreaded libs 
+# https://gitlab.kitware.com/cmake/cmake/issues/19714 
+set(Boost_NO_BOOST_CMAKE 1) 
+set(Boost_USE_MULTITHREADED ON) 
+find_package(Boost COMPONENTS chrono log log_setup iostreams thread system date_time atomic REQUIRED)
 
 find_package(TIFF REQUIRED)
+
+if(APPLE)
+  set(ENV{VK_ICD_FILENAMES} ~/vulkansdk-macos-1.1.114.0/macOS/etc/vulkan/icd.d/MoltenVK_icd.json)
+  set(ENV{VULKAN_SDK} ~/vulkansdk-macos-1.1.114.0/macOS/)
+  set(ENV{VK_LAYER_PATH} ~/vulkansdk-macos-1.1.114.0/macOS/etc/vulkan/explicit_layer.d)
+  find_library(COCOA_LIBRARY Cocoa)
+endif()
+find_package( Vulkan REQUIRED )
 
 # set(glm_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glm)
 # find_path(GLM_PATH glm/glm.hpp)
@@ -117,7 +131,6 @@ install(FILES
   # note these are release build dlls.
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/boost_chrono-vc142-mt-x64-1_70.dll
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/boost_date_time-vc142-mt-x64-1_70.dll
-	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/boost_filesystem-vc142-mt-x64-1_70.dll
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/boost_log-vc142-mt-x64-1_70.dll
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/boost_system-vc142-mt-x64-1_70.dll
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/boost_thread-vc142-mt-x64-1_70.dll
@@ -141,7 +154,6 @@ install(FILES
   # debug dlls
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin/boost_chrono-vc142-mt-gd-x64-1_70.dll
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin/boost_date_time-vc142-mt-gd-x64-1_70.dll
-	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin/boost_filesystem-vc142-mt-gd-x64-1_70.dll
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin/boost_log-vc142-mt-gd-x64-1_70.dll
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin/boost_system-vc142-mt-gd-x64-1_70.dll
 	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin/boost_thread-vc142-mt-gd-x64-1_70.dll

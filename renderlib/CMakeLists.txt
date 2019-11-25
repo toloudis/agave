@@ -6,16 +6,16 @@ configure_file (
 )
 
 add_library(renderlib "${CMAKE_CURRENT_SOURCE_DIR}/renderlib.cpp")
-
 target_include_directories(renderlib PUBLIC
 	"${CMAKE_CURRENT_SOURCE_DIR}"
 	${Boost_INCLUDE_DIRS}
 	${GLM_INCLUDE_DIRS}
 	${TIFF_INCLUDE_DIR}
 	${GLAD_DIR}
+	${Vulkan_INCLUDE_DIRS}
 )
 target_compile_definitions(renderlib PUBLIC
-	-DBOOST_ALL_DYN_LINK
+	BOOST_ALL_DYN_LINK
 )
 target_sources(renderlib PRIVATE
 	"${CMAKE_CURRENT_SOURCE_DIR}/AppScene.cpp"
@@ -61,4 +61,10 @@ target_link_libraries(renderlib
 	Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Network Qt5::WebSockets Qt5::Xml 
 	${TIFF_LIBRARIES}
 	${CMAKE_DL_LIBS}
+	${Vulkan_LIBRARIES}
 )
+if (APPLE)
+	target_link_libraries(renderlib
+		${COCOA_LIBRARY}
+	)
+endif()
