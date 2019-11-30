@@ -12,8 +12,10 @@ public:
 
 private:
   VkInstance m_instance = 0;
+  VkDebugUtilsMessengerEXT m_debugMessenger;
 
   int createInstance();
   bool checkValidationLayerSupport();
   std::vector<const char*> getRequiredExtensions();
+  void setupDebugMessenger();
 };
