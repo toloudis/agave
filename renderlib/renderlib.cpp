@@ -4,6 +4,7 @@
 #include "ImageXyzcGpu.h"
 #include "Logging.h"
 #include "glad/glad.h"
+#include "vulkan/vulkanapp.h"
 
 #include <string>
 
@@ -109,6 +110,10 @@ renderlib::initialize()
 
   LOG_INFO << "GL_VENDOR: " << std::string((char*)glGetString(GL_VENDOR));
   LOG_INFO << "GL_RENDERER: " << std::string((char*)glGetString(GL_RENDERER));
+
+
+  vulkanapp vkapp;
+  vkapp.initialize();
 
   return status;
 }
