@@ -59,10 +59,18 @@ populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
   createInfo.pfnUserCallback = debugCallback;
 }
 
+bool
+isDeviceSuitable(PhysicalDevice device)
+{
+  return device.properties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && device.features().geometryShader;
+}
+
 int
 vulkanapp::initialize()
 {
   int ret = createInstance();
+  setupDebugMessenger();
+  pickPhysicalDevice();
   return ret;
 }
 
@@ -86,8 +94,13 @@ vulkanapp::createInstance()
   createInfo.pApplicationInfo = &appInfo;
 
   auto extensions = getRequiredExtensions();
+  std::vector<const char*> cstrings{};
+  for (const auto& string : extensions) {
+    cstrings.push_back(string.c_str());
+  }
+
   createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-  createInfo.ppEnabledExtensionNames = extensions.data();
+  createInfo.ppEnabledExtensionNames = cstrings.data();
 
   VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
   if (enableValidationLayers) {
@@ -146,10 +159,10 @@ vulkanapp::checkValidationLayerSupport()
   return true;
 }
 
-std::vector<const char*>
+std::vector<std::string>
 vulkanapp::getRequiredExtensions()
 {
-  std::vector<const char*> names;
+  std::vector<std::string> names;
 
   VkResult err;
   uint32_t extensionCount = 0;
@@ -172,6 +185,7 @@ vulkanapp::getRequiredExtensions()
 
   // gather up all the names
   for (const auto& extension : extensions) {
+    // need to copy string here or else ptr will go out of scope
     names.push_back(extension.extensionName);
     LOG_DEBUG << "Extension " << extension.extensionName;
   }
@@ -193,5 +207,32 @@ vulkanapp::setupDebugMessenger()
   populateDebugMessengerCreateInfo(createInfo);
   if (CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) != VK_SUCCESS) {
     LOG_ERROR << "Vulkan failed to set up debug messenger!";
+  }
+}
+
+void
+vulkanapp::pickPhysicalDevice()
+{
+  uint32_t deviceCount = 0;
+  vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
+  if (deviceCount == 0) {
+    LOG_ERROR << "Failed to find GPUs with Vulkan support!";
+  }
+
+  std::vector<VkPhysicalDevice> devices(deviceCount);
+  vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
+
+  for (const auto& device : devices) {
+    PhysicalDevice pd(device);
+    m_physicalDevices.push_back(pd);
+
+    if (isDeviceSuitable(pd)) {
+      m_physicalDevice = device;
+      break;
+    }
+  }
+
+  if (m_physicalDevice == VK_NULL_HANDLE) {
+    LOG_ERROR << "Failed to find a suitable GPU!";
   }
 }

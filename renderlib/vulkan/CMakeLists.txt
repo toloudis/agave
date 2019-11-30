@@ -9,4 +9,6 @@ target_include_directories(renderlib PUBLIC
 target_sources(renderlib PRIVATE
 	"${CMAKE_CURRENT_SOURCE_DIR}/vulkanapp.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/vulkanapp.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vulkandevice.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vulkandevice.h"
 )
