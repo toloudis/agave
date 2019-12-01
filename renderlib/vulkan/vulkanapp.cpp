@@ -62,7 +62,9 @@ populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 bool
 isDeviceSuitable(PhysicalDevice device)
 {
-  return device.properties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && device.features().geometryShader;
+  QueueFamilyIndices indices = device.findQueueFamilies();
+
+  return indices.isComplete();
 }
 
 int
