@@ -24,3 +24,14 @@ private:
   VkPhysicalDeviceProperties m_properties = {};
   VkPhysicalDeviceFeatures m_features = {};
 };
+
+class Device
+{
+public:
+  void create();
+  void destroy();
+
+private:
+  VkDevice m_device = VK_NULL_HANDLE;
+  VkQueue m_graphicsQueue;
+};
