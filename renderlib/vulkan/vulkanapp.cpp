@@ -72,7 +72,7 @@ vulkanapp::initialize()
 {
   int ret = createInstance();
   setupDebugMessenger();
-  pickPhysicalDevice();
+  findAllPhysicalDevices();
   createLogicalDevice();
   return ret;
 }
@@ -128,7 +128,7 @@ vulkanapp::createInstance()
 void
 vulkanapp::cleanup()
 {
-  vkDestroyDevice(device, nullptr);
+  delete m_device;
 
   if (enableValidationLayers) {
     DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
@@ -216,7 +216,7 @@ vulkanapp::setupDebugMessenger()
 }
 
 void
-vulkanapp::pickPhysicalDevice()
+vulkanapp::findAllPhysicalDevices()
 {
   uint32_t deviceCount = 0;
   vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
@@ -226,59 +226,35 @@ vulkanapp::pickPhysicalDevice()
 
   std::vector<VkPhysicalDevice> devices(deviceCount);
   vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
-
   for (const auto& device : devices) {
     PhysicalDevice pd(device);
     m_physicalDevices.push_back(pd);
-
-    if (isDeviceSuitable(pd)) {
-      m_physicalDevice = device;
-      break;
-    }
-  }
-
-  if (m_physicalDevice == VK_NULL_HANDLE) {
-    LOG_ERROR << "Failed to find a suitable GPU!";
   }
 }
 
 void
-vulkanapp::createLogicalDevice(const PhysicalDevice& physicalDevice)
+vulkanapp::createLogicalDevice()
 {
-  QueueFamilyIndices indices = physicalDevice.findQueueFamilies();
+  std::optional<PhysicalDevice> physicalDevice;
+  for (const PhysicalDevice& device : m_physicalDevices) {
+    // take the first suitable device in the enumeration
+    if (isDeviceSuitable(device.handle())) {
+      physicalDevice = device;
+      break;
+    }
+  }
 
-  // create a small number of queues for each queue family and you don't really need more than one. That's because you
-  // can create all of the command buffers on multiple threads and then submit them all at once on the main thread with
-  // a single low-overhead call.
-  VkDeviceQueueCreateInfo queueCreateInfo = {};
-  queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-  queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-  queueCreateInfo.queueCount = 1;
+  if (!physicalDevice) {
+    LOG_ERROR << "Failed to find a suitable GPU!";
+    return;
+  }
 
-  float queuePriority = 1.0f;
-  queueCreateInfo.pQueuePriorities = &queuePriority;
-
-  VkPhysicalDeviceFeatures deviceFeatures = {};
-
-  VkDeviceCreateInfo createInfo = {};
-  createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-  createInfo.pQueueCreateInfos = &queueCreateInfo;
-  createInfo.queueCreateInfoCount = 1;
-
-  createInfo.pEnabledFeatures = &deviceFeatures;
-
-  createInfo.enabledExtensionCount = 0;
-
-  // in vulkan 1.1 device layers are deprecated but setting them anyway.
-  if (enableValidationLayers) {
-    createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-    createInfo.ppEnabledLayerNames = validationLayers.data();
+  // std::error_code ec;
+  Device* result = Device::make(physicalDevice.value());
+  if (result) {
+    // everything alright
+    m_device = result;
   } else {
-    createInfo.enabledLayerCount = 0;
+    LOG_ERROR << "Failed to make Device";
   }
-
-  if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS) {
-    LOG_ERROR << "Failed to create logical device!";
-  }
-  vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
 }
