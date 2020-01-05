@@ -250,7 +250,7 @@ vulkanapp::createLogicalDevice()
   }
 
   // std::error_code ec;
-  Device* result = Device::make(physicalDevice.value());
+  Device* result = Device::make(*physicalDevice);
   if (result) {
     // everything alright
     m_device = result;

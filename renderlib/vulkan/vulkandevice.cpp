@@ -48,7 +48,8 @@ Device::make(const PhysicalDevice& physicalDevice)
   // a single low-overhead call.
   VkDeviceQueueCreateInfo queueCreateInfo = {};
   queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-  queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+  // * operator is workaround for mac optional::value error
+  queueCreateInfo.queueFamilyIndex = *(indices.graphicsFamily);
   queueCreateInfo.queueCount = 1;
 
   float queuePriority = 1.0f;
@@ -79,7 +80,8 @@ Device::make(const PhysicalDevice& physicalDevice)
     LOG_ERROR << "failed to create logical device!";
     return nullptr;
   }
-  return new Device(device, physicalDevice, indices.graphicsFamily.value());
+  // * operator is workaround for mac optional::value error
+  return new Device(device, physicalDevice, *(indices.graphicsFamily));
 }
 
 Device::Device(VkDevice device, const PhysicalDevice& physicalDevice, uint32_t graphicsQueueFamilyIndex)
