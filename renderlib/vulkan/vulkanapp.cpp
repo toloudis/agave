@@ -250,6 +250,7 @@ vulkanapp::createLogicalDevice()
   }
 
   // std::error_code ec;
+  // * operator is workaround for mac optional::value error
   Device* result = Device::make(*physicalDevice);
   if (result) {
     // everything alright
