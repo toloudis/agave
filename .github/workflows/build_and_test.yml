@@ -23,10 +23,10 @@ jobs:
           git submodule sync --recursive
           git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - uses: ilammy/msvc-dev-cmd@v1.0.1
-      - name: Install Python 3.7 version
+      - name: Install Python 3.8 version
         uses: actions/setup-python@v1
         with:
-          python-version: "3.7"
+          python-version: "3.8"
           architecture: "x64"
       - name: Install Qt
         uses: ouuan/install-qt-action@v2.4.1
