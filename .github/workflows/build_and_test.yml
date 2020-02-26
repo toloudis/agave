@@ -1,27 +1,32 @@
 name: C++ Build
 on: push
+  branches-ignore:
+    - "master"
 jobs:
   cmake-build:
-    runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 6
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
+    runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v2
-      - uses: ilammy/msvc-dev-cmd@v1.0.1
-      - name: Install Python 3.8 version
-        uses: actions/setup-python@v1
-        with:
-          python-version: "3.8"
-          architecture: "x64"
       - name: Checkout submodules
         shell: bash
         run: |
+          # If your submodules are configured to use SSH instead of HTTPS please uncomment the following line
+          # git config --global url."https://github.com/".insteadOf "git@github.com:"
           auth_header="$(git config --local --get http.https://github.com/.extraheader)"
           git submodule sync --recursive
           git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+      - uses: ilammy/msvc-dev-cmd@v1.0.1
+      - name: Install Python 3.7 version
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.7"
+          architecture: "x64"
       - name: Install Qt
         uses: ouuan/install-qt-action@v2.4.1
         with:
@@ -39,14 +44,7 @@ jobs:
           cmake ..
           cmake --build . --target agave_test --config Release
           sudo cmake --build . --target install --config Release
-          zip -vr agave_macOS.zip agave.app/
         shell: bash
-      - name: Upload mac artifact
-        if: matrix.os == 'macOS-latest'
-        uses: actions/upload-artifact@v1
-        with:
-          name: agave-mac
-          path: ./build/agave_macOS.zip
       - name: linux build and test
         if: matrix.os == 'ubuntu-latest'
         env:
@@ -72,35 +70,4 @@ jobs:
           cmake -DCMAKE_TOOLCHAIN_FILE="%VCPKG_INSTALLATION_ROOT%\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows -A x64 ..
           cmake --build . --target agave_test --config Release
           cmake --build . --target install --config Release
-          powershell Compress-Archive -Path .\agave-install -DestinationPath agave_win.zip
         shell: cmd
-      - name: Upload windows artifact
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v1
-        with:
-          name: agave-win
-          path: ./build/agave_win.zip
-
-  make-release:
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: cmake-build
-    steps:
-      - name: Get mac build artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: agave-mac
-      - name: Get windows build artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: agave-win
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: true
-          prerelease: true
-          files: |
-            ${{ github.workspace }}/agave-mac/agave_macOS.zip
-            ${{ github.workspace }}/agave-win/agave_win.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
