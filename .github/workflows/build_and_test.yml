@@ -1,7 +1,8 @@
 name: C++ Build
-on: push
-  branches-ignore:
-    - "master"
+on:
+  push:
+    branches-ignore:
+      - "master"
 jobs:
   cmake-build:
     strategy:
