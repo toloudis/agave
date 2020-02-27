@@ -28,6 +28,14 @@ jobs:
         with:
           python-version: "3.8"
           architecture: "x64"
+      - name: Setup conda
+        uses: s-weigand/setup-conda@v1
+        with:
+          update-conda: true
+          python-version: "3.8"
+          conda-channels: anaconda, conda-forge
+      - run: conda --version
+      - run: which python
       - name: Install Qt
         uses: ouuan/install-qt-action@v2.3.1
         with:
