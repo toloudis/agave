@@ -27,19 +27,10 @@ jobs:
         with:
           python-version: "3.7"
           architecture: "x64"
-      # - name: Setup conda
-      #   uses: s-weigand/setup-conda@v1
-      #   with:
-      #     update-conda: true
-      #     python-version: "3.8"
-      #     conda-channels: anaconda, conda-forge
-      # - run: conda --version
-      # - run: which python
       - name: Install Qt
         uses: ouuan/install-qt-action@v2.3.1
         with:
           version: 5.12.6
-          # aqtversion: "==0.7.1"
       - name: macos build and test
         if: matrix.os == 'macOS-latest'
         env:
@@ -53,6 +44,12 @@ jobs:
           cmake --build . --target agave_test --config Release
           sudo cmake --build . --target install --config Release
         shell: bash
+      - name: Upload mac artifact
+        if: matrix.os == 'macOS-latest'
+        uses: actions/upload-artifact@v1
+        with:
+          name: agave-mac
+          path: ./build/agave_macOS.zip
       - name: linux build and test
         if: matrix.os == 'ubuntu-latest'
         env:
@@ -79,3 +76,9 @@ jobs:
           cmake --build . --target agave_test --config Release
           cmake --build . --target install --config Release
         shell: cmd
+      - name: Upload windows artifact
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v1
+        with:
+          name: agave-win
+          path: ./build/agave_win.zip
