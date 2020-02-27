@@ -22,19 +22,19 @@ jobs:
           git submodule sync --recursive
           git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - uses: ilammy/msvc-dev-cmd@v1.0.1
-      - name: Install Python 3.8 version
+      - name: Install Python 3.7 version
         uses: actions/setup-python@v1
         with:
-          python-version: "3.8"
+          python-version: "3.7"
           architecture: "x64"
-      - name: Setup conda
-        uses: s-weigand/setup-conda@v1
-        with:
-          update-conda: true
-          python-version: "3.8"
-          conda-channels: anaconda, conda-forge
-      - run: conda --version
-      - run: which python
+      # - name: Setup conda
+      #   uses: s-weigand/setup-conda@v1
+      #   with:
+      #     update-conda: true
+      #     python-version: "3.8"
+      #     conda-channels: anaconda, conda-forge
+      # - run: conda --version
+      # - run: which python
       - name: Install Qt
         uses: ouuan/install-qt-action@v2.3.1
         with:
