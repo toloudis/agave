@@ -83,6 +83,8 @@ find_package(TIFF REQUIRED)
 # find_path(GLM_PATH glm/glm.hpp)
 find_package( glm REQUIRED )
 
+find_package (Python3 COMPONENTS Interpreter Development)
+
 ######################
 # THE COMMON CORE LIBRARIES
 ######################
@@ -131,6 +133,9 @@ install(
   CONFIGURATIONS Debug
   FILES_MATCHING PATTERN "*.dll"
 )
+get_target_property(py_location Python3::Python LOCATION)
+message(STATUS "PYTHON3 Location: ${py_location}")
+
 install(FILES 
   ${PROJECT_SOURCE_DIR}/LICENSE.txt
   ${PROJECT_SOURCE_DIR}/HELP.txt
@@ -140,6 +145,7 @@ install(FILES
   $<TARGET_FILE:Qt5::Xml>
   $<TARGET_FILE:Qt5::Network>
   $<TARGET_FILE:Qt5::WebSockets>
+  $<TARGET_FILE:Python3::Python>
   DESTINATION ${INSTALLDIR}
   CONFIGURATIONS Release
 )
@@ -152,6 +158,7 @@ install(FILES
   $<TARGET_FILE:Qt5::Xml>
   $<TARGET_FILE:Qt5::Network>
   $<TARGET_FILE:Qt5::WebSockets>
+  $<TARGET_FILE:Python3::Python>
   DESTINATION ${INSTALLDIR}
   CONFIGURATIONS Debug
 )
@@ -197,7 +204,8 @@ install(FILES
   $<TARGET_FILE:Qt5::Xml>
   $<TARGET_FILE:Qt5::Network>
   $<TARGET_FILE:Qt5::WebSockets>
-  ${PYTHON_LIBRARIES}
+  $<TARGET_FILE:Python3::Python>
+  # ${PYTHON_LIBRARIES}
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/Frameworks/
 )
 
@@ -276,7 +284,7 @@ install(FILES
   $<TARGET_FILE:Qt5::Xml>
   $<TARGET_FILE:Qt5::Network>
   $<TARGET_FILE:Qt5::WebSockets>
-  ${PYTHON_LIBRARIES}
+  $<TARGET_FILE:Python3::Python>
 	DESTINATION ${INSTALLDIR}
 )
 install(FILES 
