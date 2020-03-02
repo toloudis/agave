@@ -74,6 +74,7 @@ find_package(Qt5 COMPONENTS Widgets Core Gui Network WebSockets Xml REQUIRED)
 # the following line is a workaround for homebrew boost 1.71 + cmake not finding the boost multithreaded libs
 # https://gitlab.kitware.com/cmake/cmake/issues/19714
 set(Boost_NO_BOOST_CMAKE ON)
+set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 find_package(Boost COMPONENTS chrono log log_setup iostreams thread system filesystem date_time atomic REQUIRED)
 
