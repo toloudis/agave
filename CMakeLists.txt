@@ -85,6 +85,9 @@ find_package(TIFF REQUIRED)
 find_package( glm REQUIRED )
 
 find_package (Python3 COMPONENTS Interpreter Development)
+get_target_property(py_location Python3::Interpreter LOCATION)
+message(STATUS "PYTHON3 Location: ${py_location}")
+set(PYTHON_EXECUTABLE ${py_location})
 
 ######################
 # THE COMMON CORE LIBRARIES
@@ -134,8 +137,6 @@ install(
   CONFIGURATIONS Debug
   FILES_MATCHING PATTERN "*.dll"
 )
-get_target_property(py_location Python3::Python LOCATION)
-message(STATUS "PYTHON3 Location: ${py_location}")
 
 install(FILES 
   ${PROJECT_SOURCE_DIR}/LICENSE.txt
