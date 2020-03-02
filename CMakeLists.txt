@@ -84,7 +84,6 @@ find_package(TIFF REQUIRED)
 # find_path(GLM_PATH glm/glm.hpp)
 find_package( glm REQUIRED )
 
-set(Python3_FIND_STRATEGY LOCATION)
 find_package (Python3 COMPONENTS Interpreter Development)
 get_target_property(py_location Python3::Interpreter LOCATION)
 message(STATUS "PYTHON3 Location: ${py_location}")
