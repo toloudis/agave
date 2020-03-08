@@ -227,7 +227,7 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/PlugIns/imageformats/
 )
 install(FILES 
-  $<TARGET_FILE:Qt5::QMacintoshStylePlugin>
+  $<TARGET_FILE:Qt5::QMacStylePlugin>
   DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/PlugIns/styles/
 )
 
