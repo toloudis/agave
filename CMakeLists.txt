@@ -173,6 +173,10 @@ install(FILES
   $<TARGET_FILE:Qt5::QTiffPlugin>
   DESTINATION ${INSTALLDIR}/imageformats/
 )
+install(FILES 
+  $<TARGET_FILE:Qt5::QWindowsVistaStylePlugin>
+  DESTINATION ${INSTALLDIR}/styles/
+)
 
 ################
 elseif (APPLE)
@@ -212,16 +216,10 @@ install(FILES
 )
 
 
-install_qt5_plugin("Qt5::QCocoaIntegrationPlugin" QT_PLUGINS ${CMAKE_INSTALL_PREFIX}agave.app/Contents)
-# set(${QT_PLUGINS} 
-#             "${${_qt_plugins_var}};${_qt_plugin_dest}/${_qt_plugin_file}")
-# install(FILES 
-#   $<TARGET_FILE:Qt5::QCocoaIntegrationPlugin>
-#   DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/PlugIns/platforms/
-# )
+# install_qt5_plugin("Qt5::QCocoaIntegrationPlugin" QT_PLUGINS ${CMAKE_INSTALL_PREFIX}agave.app/Contents)
 install(FILES 
   $<TARGET_FILE:Qt5::QCocoaIntegrationPlugin>
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/MacOS/platforms/
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/PlugIns/platforms/
 )
 install(FILES 
   $<TARGET_FILE:Qt5::QJpegPlugin>
@@ -229,9 +227,8 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/PlugIns/imageformats/
 )
 install(FILES 
-  $<TARGET_FILE:Qt5::QJpegPlugin>
-  $<TARGET_FILE:Qt5::QTiffPlugin>
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/MacOS/imageformats/
+  $<TARGET_FILE:Qt5::QMacintoshStylePlugin>
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/agave.app/Contents/PlugIns/styles/
 )
 
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
