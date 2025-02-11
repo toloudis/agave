@@ -89,6 +89,16 @@ add_subdirectory(gesture)
 add_subdirectory(graphics)
 add_subdirectory(io)
 add_subdirectory(pugixml)
+add_subdirectory(Core/ch)
+add_subdirectory(Core/dbg)
+add_subdirectory(Core/env)
+add_subdirectory(Core/fs)
+add_subdirectory(Core/gf)
+add_subdirectory(Core/it)
+add_subdirectory(Core/ma)
+add_subdirectory(Core/name)
+add_subdirectory(Core/prty)
+add_subdirectory(Core/undo)
 
 target_link_libraries(renderlib
 	Qt::Core Qt::OpenGL
